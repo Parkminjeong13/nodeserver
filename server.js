@@ -46,8 +46,17 @@ app.get('/about', (req,res)=>{
 })
 app.get('/list', async (req,res)=>{
 
-    const result = await db.collection("notice").find().toArray()
-    // console.log(result[0])
+    const result = await db.collection("notice").find().limit(5).toArray()
+    console.log(result[0])
+
+    res.render("list.ejs", {
+        data : result
+    })
+})
+app.get('/list/:id', async (req,res)=>{
+
+    const result = await db.collection("notice").find().skip((req.params.id-1)*5).limit(5).toArray()
+    console.log(result[0])
 
     res.render("list.ejs", {
         data : result
@@ -110,9 +119,17 @@ app.get('/edit/:id', async (req,res)=>{
     })
 })
 
-app.delete('/delete', async (req,res)=>{
+app.get('/delete/:id', async (req,res)=>{    
     await db.collection("notice").deleteOne({
-        _id : new ObjectId(req.body._id)
+        _id : new ObjectId(req.params.id)
     })
     res.redirect('/list')
 })
+
+
+// app.delete('/delete', async (req,res)=>{
+//     await db.collection("notice").deleteOne({
+//         _id : new ObjectId(req.body._id)
+//     })
+//     res.redirect('/list')
+// })
